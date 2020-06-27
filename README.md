@@ -1,1 +1,1 @@
-# RestEase.SourceGenerator
+# RestEase.Controllers.SourceGenerator
