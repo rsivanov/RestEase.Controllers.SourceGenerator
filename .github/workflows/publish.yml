@@ -1,4 +1,4 @@
-name: Build & test
+name: Build & test & publish Nuget
 
 on:
   push:
@@ -21,3 +21,30 @@ jobs:
       run: dotnet build --configuration Release --no-restore
     - name: Test
       run: dotnet test --no-restore --verbosity normal
+    - name: Publish to Nuget on version change
+      id: publish_nuget
+      uses: rohith/publish-nuget@v2
+      with:
+        # Filepath of the project to be packaged, relative to root of repository
+        PROJECT_FILE_PATH: src/RestEase.Controllers.SourceGenerator/RestEase.Controllers.SourceGenerator.csproj
+          
+        # NuGet package id, used for version detection & defaults to project name
+        PACKAGE_NAME: RestEase.Controllers.SourceGenerator
+
+        # Regex pattern to extract version info in a capturing group
+        VERSION_REGEX: <PackageVersion>(.*)<\/PackageVersion>
+          
+        # Flag to toggle git tagging, enabled by default
+        TAG_COMMIT: true
+
+        # Format of the git tag, [*] gets replaced with actual version
+        TAG_FORMAT: v*
+
+        # API key to authenticate with NuGet server
+        NUGET_KEY: ${{secrets.NUGET_API_KEY}}
+
+        # NuGet server uri hosting the packages, defaults to https://api.nuget.org
+        NUGET_SOURCE: https://api.nuget.org
+
+        # Flag to toggle pushing symbols along with nuget package to the server, disabled by default
+        INCLUDE_SYMBOLS: false
