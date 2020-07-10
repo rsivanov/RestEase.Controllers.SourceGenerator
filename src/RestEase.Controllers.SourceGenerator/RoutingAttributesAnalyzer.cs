@@ -17,6 +17,7 @@ namespace RestEase.Controllers.SourceGenerator
 		private readonly INamedTypeSymbol _fromBodyAttributeSymbol;
 		private readonly INamedTypeSymbol _fromHeaderAttributeSymbol;
 		private readonly INamedTypeSymbol _fromQueryAttributeSymbol;
+		private readonly INamedTypeSymbol _fromRouteAttributeSymbol;
 
 		public RoutingAttributesAnalyzer(SourceGeneratorContext context)
 		{
@@ -31,6 +32,7 @@ namespace RestEase.Controllers.SourceGenerator
 			_fromBodyAttributeSymbol = context.Compilation.GetTypeByMetadataName("Microsoft.AspNetCore.Mvc.FromBodyAttribute");
 			_fromHeaderAttributeSymbol = context.Compilation.GetTypeByMetadataName("Microsoft.AspNetCore.Mvc.FromHeaderAttribute");
 			_fromQueryAttributeSymbol = context.Compilation.GetTypeByMetadataName("Microsoft.AspNetCore.Mvc.FromQueryAttribute");
+			_fromRouteAttributeSymbol = context.Compilation.GetTypeByMetadataName("Microsoft.AspNetCore.Mvc.FromRouteAttribute");
 		}
 
 		public string GetBasePathAttribute(INamedTypeSymbol controllerClassSymbol)
@@ -160,9 +162,8 @@ namespace RestEase.Controllers.SourceGenerator
 		{
 			var bodyAttributeData = parameterSymbol.GetAttributes().FirstOrDefault(a => _fromBodyAttributeSymbol.Equals(a.AttributeClass, SymbolEqualityComparer.Default));
 			if (bodyAttributeData != null)
-			{
 				return $"[Body]";
-			}
+
 			return null;
 		}
 
@@ -186,6 +187,7 @@ namespace RestEase.Controllers.SourceGenerator
 				var queryParamName = queryAttributeData.NamedArguments.Where(na => na.Key == "Name").Select(na => na.Value.ToCSharpString()).FirstOrDefault();
 				if (queryParamName != null)
 					return $"[Query({queryParamName}, QuerySerializationMethod.Serialized)]";
+
 				return "[Query(QuerySerializationMethod.Serialized)]";
 			}
 			return null;
@@ -193,9 +195,17 @@ namespace RestEase.Controllers.SourceGenerator
 
 		public string GetPathParameterAttribute(IParameterSymbol parameterSymbol, string route)
 		{
-			if (route != null && route.Contains($"{{{parameterSymbol.Name}}}"))
-			{
+			if (route == null)
+				return null;
+			if (route.Contains($"{{{parameterSymbol.Name}}}"))
 				return "[Path]";
+
+			var routeAttributeData = parameterSymbol.GetAttributes().FirstOrDefault(a => _fromRouteAttributeSymbol.Equals(a.AttributeClass, SymbolEqualityComparer.Default));
+			if (routeAttributeData != null)
+			{
+				var routeParamName = routeAttributeData.NamedArguments.Where(na => na.Key == "Name").Select(na => na.Value.ToCSharpString()).FirstOrDefault();
+				if (routeParamName != null && route.Contains($"{{{routeParamName.Trim('"')}}}"))
+					return $"[Path({routeParamName})]";
 			}
 			return null;
 		}

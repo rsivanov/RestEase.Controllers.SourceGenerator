@@ -2,15 +2,22 @@
 
 	<PropertyGroup>
 		<TargetFramework>netstandard2.0</TargetFramework>
-		<LangVersion>8.0</LangVersion>
-	</PropertyGroup>
-
-	<PropertyGroup>
-		<RestoreAdditionalProjectSources>https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet5/nuget/v3/index.json ;$(RestoreAdditionalProjectSources)</RestoreAdditionalProjectSources>
+		<LangVersion>preview</LangVersion>
+		<GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+		<PackageVersion>0.0.1</PackageVersion>
+		<AssemblyVersion>$(PackageVersion)</AssemblyVersion>
+		<Authors>rsivanov</Authors>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageProjectUrl>https://github.com/rsivanov/RestEase.Controllers.SourceGenerator</PackageProjectUrl>
+		<PackageDescription>Provides a source generator of RestEase interfaces with all required attributes for calling web application controllers. Useful for writing strongly-typed asp.net core integration tests.</PackageDescription>
+		<Copyright>Copyright 2020</Copyright>
+		<PackageTags>RestEase;Integration testing;SourceGenerator</PackageTags>
+		<RepositoryUrl>https://github.com/rsivanov/RestEase.Controllers.SourceGenerator</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="3.6.0-3.20207.2" PrivateAssets="all" />
+		<PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="3.7.0-2.final" PrivateAssets="all" />
 		<PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.0.0" PrivateAssets="all" />
 	</ItemGroup>
 

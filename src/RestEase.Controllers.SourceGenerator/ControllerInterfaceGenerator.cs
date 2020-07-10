@@ -1,4 +1,5 @@
 ﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 using System.Collections.Generic;
@@ -10,18 +11,13 @@ namespace RestEase.Controllers.SourceGenerator
 	[Generator]
 	public class ControllerInterfaceGenerator : ISourceGenerator
 	{
-		/// <summary>
-		/// Created on demand before each generation pass
-		/// </summary>
 		class SyntaxReceiver : ISyntaxReceiver
 		{
 			public List<ClassDeclarationSyntax> Controllers { get; } = new List<ClassDeclarationSyntax>();
 
-			/// <summary>
-			/// Called for every syntax node in the compilation, we can inspect the nodes and save any information useful for generation
-			/// </summary>
 			public void OnVisitSyntaxNode(SyntaxNode syntaxNode)
 			{
+				//For the sake of simplicity we only process public classes with Controller name postfix
 				if (syntaxNode is ClassDeclarationSyntax classDeclarationSyntax &&
 					classDeclarationSyntax.Modifiers.Any(m => m.ValueText == "public") &&
 					 classDeclarationSyntax.Identifier.ValueText.EndsWith("Controller"))
@@ -84,7 +80,7 @@ namespace {namespaceName}
 
 		private void ProcessMethod(IMethodSymbol methodSymbol, RoutingAttributesAnalyzer routingAttributesAnalyzer, StringBuilder methodSourceBuilder)
 		{
-			string route = null;
+			string route;
 			var requestAttribute = routingAttributesAnalyzer.GetGetMethodAttribute(methodSymbol, out route);
 			if (requestAttribute == null)
 				requestAttribute = routingAttributesAnalyzer.GetPostMethodAttribute(methodSymbol, out route);

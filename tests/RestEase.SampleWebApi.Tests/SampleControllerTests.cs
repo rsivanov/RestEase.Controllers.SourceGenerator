@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.Testing;
 using RestEase.Implementation;
 using RestEase.SampleWebApi.Controllers;
-using RestEase.SampleWebApi.Infrastructure;
+using RestEase.Serialization.Extensions;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -17,9 +17,7 @@ namespace RestEase.SampleWebApi.Tests
 			var client = _factory.CreateClient();
 			var requester = new Requester(client)
 			{
-				RequestQueryParamSerializer = new ComplexRequestQueryParamSerializer(),
-				RequestBodySerializer = new FileContentRequestBodySerializer(),
-				ResponseDeserializer = new FileContentResponseDeserializer()
+				RequestQueryParamSerializer = new ComplexTypeRequestQueryParamSerializer(),
 			};
 			_controller = RestClient.For<ISampleController>(requester);
 		}

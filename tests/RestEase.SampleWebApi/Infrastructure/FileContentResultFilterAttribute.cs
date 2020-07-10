@@ -11,16 +11,16 @@ namespace RestEase.SampleWebApi.Infrastructure
 	{
 		public async Task OnResultExecutionAsync(ResultExecutingContext context, ResultExecutionDelegate next)
 		{
-			var controller = (ControllerBase)context.Controller;
+			var controller = (ControllerBase) context.Controller;
 
-			if (!((context.Result as ObjectResult)?.Value is FileContent downloadable))
+			if ((context.Result as ObjectResult)?.Value is FileContent fileContent)
 			{
-				context.Result = controller.NotFound();
+				controller.Response.Headers.Add("Access-Control-Expose-Headers", new StringValues("Content-Disposition"));
+				context.Result = controller.File(fileContent.Content, fileContent.MimeType, fileContent.FileName);
 			}
 			else
 			{
-				controller.Response.Headers.Add("Access-Control-Expose-Headers", new StringValues("Content-Disposition"));
-				context.Result = controller.File(downloadable.Content, downloadable.MimeType, downloadable.FileName);
+				context.Result = controller.NotFound();
 			}
 
 			await next();

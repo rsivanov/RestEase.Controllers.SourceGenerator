@@ -8,17 +8,14 @@ namespace RestEase.SampleWebApi.Infrastructure
 	{
 		public override HttpContent SerializeBody<T>(T body, RequestBodySerializerInfo info)
 		{
-			if (typeof(T) != typeof(FileContent))
+			if (body is FileContent fileContent)
 			{
-				return base.SerializeBody(body, info);
+				var content = new ByteArrayContent(fileContent.Content);
+				content.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-header") { FileName = $"\"{fileContent.FileName}\"" };
+				content.Headers.ContentType = new MediaTypeHeaderValue(fileContent.MimeType);
+				return content;			
 			}
-
-			var downloadable = body as FileContent;
-
-			var content = new ByteArrayContent(downloadable.Content);
-			content.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-header") { FileName = $"\"{downloadable.FileName}\"" };
-			content.Headers.ContentType = new MediaTypeHeaderValue(downloadable.MimeType);
-			return content;
+			return base.SerializeBody(body, info);
 		}
 	}
 }

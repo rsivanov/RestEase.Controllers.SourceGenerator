@@ -8,19 +8,17 @@ namespace RestEase.SampleWebApi.Infrastructure
 	{
 		public override T Deserialize<T>(string content, HttpResponseMessage response, ResponseDeserializerInfo info)
 		{
-			if (typeof(T) != typeof(FileContent))
+			if (typeof(T) == typeof(FileContent))
 			{
-				return base.Deserialize<T>(content, response, info);
+				var instance = Activator.CreateInstance<T>();
+				var fileContent = instance as FileContent;
+				fileContent.FileName = response.Content.Headers.ContentDisposition.FileName;
+				fileContent.MimeType = response.Content.Headers.ContentType.MediaType;
+				fileContent.Content = response.Content.ReadAsByteArrayAsync().Result;
+
+				return instance;
 			}
-
-			var instance = Activator.CreateInstance<T>(); // or JsonConvert SerializeObject + DeserializeObject
-
-			var downloadable = instance as FileContent;
-			downloadable.FileName = response.Content.Headers.ContentDisposition.FileName;
-			downloadable.MimeType = response.Content.Headers.ContentType.MediaType;
-			downloadable.Content = response.Content.ReadAsByteArrayAsync().Result;
-
-			return instance;
+			return base.Deserialize<T>(content, response, info);
 		}
 	}
 }
