@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis;
+﻿//#define LAUNCH_DEBUGGER
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
@@ -74,7 +75,9 @@ namespace {namespaceName}
 			interfaceSourceBuilder.Append(@"
 	} 
 }");
-			//System.Diagnostics.Debugger.Launch();
+#if DEBUG && LAUNCH_DEBUGGER
+			System.Diagnostics.Debugger.Launch();
+#endif
 			context.AddSource($"{interfaceName}.generated.cs", SourceText.From(interfaceSourceBuilder.ToString(), Encoding.UTF8));
 		}
 
