@@ -28,12 +28,12 @@ namespace RestEase.Controllers.SourceGenerator
 			}
 		}
 
-		public void Initialize(InitializationContext context)
+		public void Initialize(GeneratorInitializationContext context)
 		{
 			context.RegisterForSyntaxNotifications(() => new SyntaxReceiver());
 		}
 
-		public void Execute(SourceGeneratorContext context)
+		public void Execute(GeneratorExecutionContext context)
 		{
 			if (!(context.SyntaxReceiver is SyntaxReceiver receiver))
 				return;
@@ -52,7 +52,7 @@ namespace RestEase.Controllers.SourceGenerator
 			}
 		}
 
-		private void ProcessController(SourceGeneratorContext context, INamedTypeSymbol controllerClassSymbol, RoutingAttributesAnalyzer routingAttributesAnalyzer)
+		private void ProcessController(GeneratorExecutionContext context, INamedTypeSymbol controllerClassSymbol, RoutingAttributesAnalyzer routingAttributesAnalyzer)
 		{
 			var namespaceName = controllerClassSymbol.ContainingNamespace.ToDisplayString();
 			var interfaceName = $"I{controllerClassSymbol.Name}";

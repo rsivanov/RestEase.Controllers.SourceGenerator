@@ -19,7 +19,7 @@ namespace RestEase.Controllers.SourceGenerator
 		private readonly INamedTypeSymbol _fromQueryAttributeSymbol;
 		private readonly INamedTypeSymbol _fromRouteAttributeSymbol;
 
-		public RoutingAttributesAnalyzer(SourceGeneratorContext context)
+		public RoutingAttributesAnalyzer(GeneratorExecutionContext context)
 		{
 			_routeAttributeSymbol = context.Compilation.GetTypeByMetadataName("Microsoft.AspNetCore.Mvc.RouteAttribute");
 			_getAttributeSymbol = context.Compilation.GetTypeByMetadataName("Microsoft.AspNetCore.Mvc.HttpGetAttribute");
